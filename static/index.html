@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MamaGemma — Maternal Health Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #1a6b4a;
+  --green-light: #e8f5ee;
+  --green-mid: #2d9162;
+  --amber: #c97b1a;
+  --amber-light: #fdf3e3;
+  --red: #c0392b;
+  --red-light: #fdecea;
+  --blue: #1a5c8a;
+  --blue-light: #e8f2fb;
+  --cream: #faf8f4;
+  --white: #ffffff;
+  --text: #1a1a1a;
+  --text-mid: #4a4a4a;
+  --text-light: #7a7a7a;
+  --border: #e2ddd6;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  background: var(--green);
+  color: white;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(26,107,74,0.3);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.logo-text h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+}
+
+.logo-text span {
+  font-size: 11px;
+  opacity: 0.75;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.api-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px #4ade80;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.tab {
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: rgba(255,255,255,0.7);
+  background: transparent;
+  border: none;
+}
+
+.tab.active, .tab:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+/* ── Layout ── */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+/* ── Sections ── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── Form card ── */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.form-card h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--green);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+input, select, textarea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--text);
+  transition: border-color 0.15s;
+  outline: none;
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--green-mid);
+  background: white;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+/* ── Symptom chips ── */
+.chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-mid);
+  user-select: none;
+}
+
+.chip:hover { border-color: var(--green-mid); color: var(--green); }
+
+.chip.selected {
+  background: var(--green-light);
+  border-color: var(--green-mid);
+  color: var(--green);
+}
+
+.chip.danger-chip.selected {
+  background: var(--red-light);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* ── Photo upload ── */
+.photo-zone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--cream);
+}
+
+.photo-zone:hover { border-color: var(--green-mid); background: var(--green-light); }
+
+.photo-zone p { font-size: 13px; color: var(--text-light); margin-top: 6px; }
+
+#photo-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ── Submit ── */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+}
+
+.submit-btn:hover { background: var(--green-mid); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,107,74,0.3); }
+.submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { background: #a0bfb0; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── Spinner ── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Result card ── */
+#result-section { display: none; }
+
+.urgency-banner {
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.urgency-banner.routine { background: var(--green-light); border: 1.5px solid #a3d4be; }
+.urgency-banner.watch { background: var(--amber-light); border: 1.5px solid #f0c97a; }
+.urgency-banner.urgent { background: #fff3e0; border: 1.5px solid #f5a623; }
+.urgency-banner.emergency { background: var(--red-light); border: 2px solid var(--red); }
+
+.urgency-icon { font-size: 28px; flex-shrink: 0; }
+
+.urgency-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.urgency-banner.routine .urgency-label { color: var(--green); }
+.urgency-banner.watch .urgency-label { color: var(--amber); }
+.urgency-banner.urgent .urgency-label { color: #d4730a; }
+.urgency-banner.emergency .urgency-label { color: var(--red); }
+
+.urgency-text { font-size: 14px; color: var(--text-mid); line-height: 1.5; }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.result-block {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.result-block.full { grid-column: 1 / -1; }
+
+.result-block h3 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
+.result-block p {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+
+.recs-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recs-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+.recs-list li::before {
+  content: "→";
+  color: var(--green-mid);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pidgin-block {
+  background: linear-gradient(135deg, #f0fdf7 0%, #e8f5ee 100%);
+  border: 1.5px solid #a3d4be;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.pidgin-block h3 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.pidgin-block p {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--green);
+  line-height: 1.6;
+}
+
+.referral-alert {
+  background: var(--red-light);
+  border: 1.5px solid #e8b0aa;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.referral-alert span { font-size: 22px; }
+.referral-alert div { font-size: 14px; color: #8b2020; line-height: 1.5; }
+.referral-alert strong { display: block; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+
+.new-btn {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 20px;
+}
+
+.new-btn:hover { background: var(--green-light); }
+
+/* ── History ── */
+.history-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.history-card:hover { border-color: var(--green-mid); transform: translateY(-1px); }
+
+.history-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.history-id { font-size: 12px; color: var(--text-light); font-family: monospace; }
+
+.urgency-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.badge-routine { background: var(--green-light); color: var(--green); }
+.badge-watch { background: var(--amber-light); color: var(--amber); }
+.badge-urgent { background: #fff3e0; color: #d4730a; }
+.badge-emergency { background: var(--red-light); color: var(--red); }
+
+.history-complaint { font-size: 14px; color: var(--text-mid); }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* ── About ── */
+.about-hero {
+  background: var(--green);
+  color: white;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.about-hero h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.about-hero p { font-size: 15px; opacity: 0.85; line-height: 1.6; }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.about-block {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.about-block h3 { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 8px; }
+.about-block p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+.about-block ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.about-block ul li { font-size: 13px; color: var(--text-mid); display: flex; gap: 8px; }
+.about-block ul li::before { content: "✓"; color: var(--green-mid); font-weight: 700; }
+
+.model-tag {
+  display: inline-block;
+  background: var(--blue-light);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .form-grid, .result-grid, .about-grid { grid-template-columns: 1fr; }
+  .form-card { padding: 20px; }
+  header { padding: 0 16px; }
+  .logo-text span { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🤱</div>
+    <div class="logo-text">
+      <h1>MamaGemma</h1>
+      <span>Maternal Health Assistant</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="api-status">
+      <div class="status-dot"></div>
+      <span id="api-status-text">Checking...</span>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="showSection('assess')">Assess</button>
+      <button class="tab" onclick="showSection('history')">History</button>
+      <button class="tab" onclick="showSection('about')">About</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── ASSESS SECTION ── -->
+  <div id="section-assess" class="section active">
+
+    <div id="form-section">
+
+      <!-- Patient Info -->
+      <div class="form-card">
+        <h2>👩 Patient Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Age (years)</label>
+            <input type="number" id="patient-age" placeholder="e.g. 24" min="10" max="60">
+          </div>
+          <div class="form-group">
+            <label>Gestation (weeks)</label>
+            <input type="number" id="gestation-weeks" placeholder="e.g. 28" min="1" max="44">
+          </div>
+          <div class="form-group">
+            <label>Gravida / Para</label>
+            <input type="text" id="gravida-para" placeholder="e.g. G2P1">
+          </div>
+          <div class="form-group">
+            <label>Chief Complaint</label>
+            <input type="text" id="chief-complaint" placeholder="e.g. headache, reduced fetal movement">
+          </div>
+        </div>
+      </div>
+
+      <!-- Vitals -->
+      <div class="form-card">
+        <h2>📊 Vitals</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Blood Pressure (mmHg)</label>
+            <input type="text" id="bp" placeholder="e.g. 120/80">
+          </div>
+          <div class="form-group">
+            <label>Pulse (bpm)</label>
+            <input type="number" id="pulse" placeholder="e.g. 82">
+          </div>
+          <div class="form-group">
+            <label>Temperature (°C)</label>
+            <input type="number" id="temp" placeholder="e.g. 36.8" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" placeholder="e.g. 68" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Fundal Height (cm)</label>
+            <input type="number" id="fundal-height" placeholder="e.g. 28">
+          </div>
+        </div>
+      </div>
+
+      <!-- Symptoms -->
+      <div class="form-card">
+        <h2>🩺 Symptoms</h2>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">Select all that apply — tap to toggle</p>
+
+        <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--red); margin-bottom:8px;">⚠️ Danger Signs</p>
+        <div class="chips-grid" id="danger-chips">
+          <div class="chip danger-chip" data-val="severe headache">Severe headache</div>
+          <div class="chip danger-chip" data-val="blurred vision">Blurred vision</div>
+          <div class="chip danger-chip" data-val="vaginal bleeding">Vaginal bleeding</div>
+          <div class="chip danger-chip" data-val="severe abdominal pain">Severe abdo pain</div>
+          <div class="chip danger-chip" data-val="fits or convulsions">Fits / convulsions</div>
+          <div class="chip danger-chip" data-val="no fetal movement">No fetal movement</div>
+          <div class="chip danger-chip" data-val="severe swelling of face or hands">Severe swelling face/hands</div>
+          <div class="chip danger-chip" data-val="difficulty breathing">Difficulty breathing</div>
+        </div>
+
+        <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-mid); margin-top:16px; margin-bottom:8px;">Common Symptoms</p>
+        <div class="chips-grid" id="common-chips">
+          <div class="chip" data-val="nausea or vomiting">Nausea / vomiting</div>
+          <div class="chip" data-val="mild headache">Mild headache</div>
+          <div class="chip" data-val="back pain">Back pain</div>
+          <div class="chip" data-val="leg swelling">Leg swelling</div>
+          <div class="chip" data-val="fatigue">Fatigue</div>
+          <div class="chip" data-val="fever">Fever</div>
+          <div class="chip" data-val="reduced appetite">Reduced appetite</div>
+          <div class="chip" data-val="frequent urination">Frequent urination</div>
+          <div class="chip" data-val="itching">Itching</div>
+          <div class="chip" data-val="heartburn">Heartburn</div>
+          <div class="chip" data-val="dizziness">Dizziness</div>
+          <div class="chip" data-val="mild abdominal cramps">Mild cramps</div>
+        </div>
+
+        <div class="form-group" style="margin-top:16px;">
+          <label>Additional Notes</label>
+          <textarea id="notes" placeholder="Any other observations, history, or concerns..."></textarea>
+        </div>
+      </div>
+
+      <!-- Photo (optional) -->
+      <div class="form-card">
+        <h2>📷 Photo (optional)</h2>
+        <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-input').click()">
+          <div style="font-size:28px;">📸</div>
+          <p>Tap to attach a photo — rash, wound, medication label, or ultrasound</p>
+          <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(event)">
+          <img id="photo-preview">
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="submitAssessment()">
+        <span id="btn-text">Assess Patient with Gemma 4</span>
+      </button>
+
+    </div><!-- /form-section -->
+
+    <!-- Result -->
+    <div id="result-section">
+      <div id="urgency-banner" class="urgency-banner">
+        <div class="urgency-icon" id="urgency-icon"></div>
+        <div>
+          <div class="urgency-label" id="urgency-label"></div>
+          <div class="urgency-text" id="assessment-text"></div>
+        </div>
+      </div>
+
+      <div id="referral-alert" class="referral-alert" style="display:none; margin-bottom:16px;">
+        <span>🚨</span>
+        <div>
+          <strong>Referral Required</strong>
+          <span id="referral-reason"></span>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-block full">
+          <h3>Recommendations</h3>
+          <ul class="recs-list" id="recs-list"></ul>
+        </div>
+        <div class="result-block">
+          <h3>Follow-up</h3>
+          <p id="follow-up-text"></p>
+        </div>
+        <div class="pidgin-block">
+          <h3>🇳🇬 Patient Summary (Pidgin)</h3>
+          <p id="pidgin-text"></p>
+        </div>
+      </div>
+
+      <button class="new-btn" onclick="resetForm()">+ New Assessment</button>
+    </div>
+
+  </div><!-- /assess -->
+
+  <!-- ── HISTORY SECTION ── -->
+  <div id="section-history" class="section">
+    <div class="form-card" style="margin-bottom:0">
+      <h2>📋 Consultation History</h2>
+      <p style="font-size:13px; color:var(--text-light); margin-bottom:20px;">All records stored locally on this device</p>
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <!-- ── ABOUT SECTION ── -->
+  <div id="section-about" class="section">
+    <div class="about-hero">
+      <h2>MamaGemma</h2>
+      <p>An offline-capable maternal health assistant for community midwives in Nigeria, powered by Gemma 4.</p>
+      <div class="model-tag">Gemma 4 · Google DeepMind</div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-block">
+        <h3>🎯 Purpose</h3>
+        <p>Community health workers in Nigeria often operate without reliable internet, advanced equipment, or instant specialist access. MamaGemma provides AI-assisted clinical guidance at the point of care — in English and Pidgin.</p>
+      </div>
+      <div class="about-block">
+        <h3>⚡ Key Features</h3>
+        <ul>
+          <li>Offline-first — works without internet</li>
+          <li>Danger sign detection & triage</li>
+          <li>Multimodal — accepts patient photos</li>
+          <li>English + Nigerian Pidgin output</li>
+          <li>Local consultation log (privacy-first)</li>
+          <li>WHO & FMOH guideline-aligned</li>
+        </ul>
+      </div>
+      <div class="about-block">
+        <h3>🏥 Designed for</h3>
+        <ul>
+          <li>Primary Health Care (PHC) workers</li>
+          <li>Community midwives & TBAs</li>
+          <li>Rural clinic health workers</li>
+          <li>Mobile outreach teams</li>
+        </ul>
+      </div>
+      <div class="about-block">
+        <h3>⚠️ Disclaimer</h3>
+        <p>MamaGemma is a decision-support tool. It does not replace clinical judgment. Always refer to a qualified health provider for diagnosis and treatment. In emergencies, call 112 or the nearest hospital.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>🛠️ Technical Stack</h2>
+      <div style="font-size:14px; color:var(--text-mid); line-height:1.8;">
+        <strong>Model:</strong> Gemma 4 (E4B for edge deployment, 27B for cloud)<br>
+        <strong>Backend:</strong> Python / Flask<br>
+        <strong>Deployment:</strong> Ollama (offline) / Google AI Studio API<br>
+        <strong>Frontend:</strong> Vanilla HTML/CSS/JS — works on any browser, no app install<br>
+        <strong>Storage:</strong> Local JSON — no data leaves the device<br>
+        <strong>License:</strong> Apache 2.0
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const API = '';  // same origin
+
+let selectedSymptoms = [];
+let photoB64 = null;
+
+// ── Tabs ──
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'history') loadHistory();
+}
+
+// ── Chips ──
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('selected');
+    const val = chip.dataset.val;
+    if (chip.classList.contains('selected')) {
+      selectedSymptoms.push(val);
+    } else {
+      selectedSymptoms = selectedSymptoms.filter(s => s !== val);
+    }
+  });
+});
+
+// ── Photo ──
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const b64 = ev.target.result.split(',')[1];
+    photoB64 = b64;
+    const preview = document.getElementById('photo-preview');
+    preview.src = ev.target.result;
+    preview.style.display = 'block';
+    document.querySelector('#photo-zone p').textContent = '✓ Photo attached';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Submit ──
+async function submitAssessment() {
+  const btn = document.getElementById('submit-btn');
+  const btnText = document.getElementById('btn-text');
+
+  const payload = {
+    patient_age: document.getElementById('patient-age').value,
+    gestation_weeks: document.getElementById('gestation-weeks').value,
+    gravida_para: document.getElementById('gravida-para').value,
+    chief_complaint: document.getElementById('chief-complaint').value,
+    vitals: {
+      bp: document.getElementById('bp').value,
+      pulse: document.getElementById('pulse').value,
+      temp: document.getElementById('temp').value,
+      weight: document.getElementById('weight').value,
+      fundal_height: document.getElementById('fundal-height').value,
+    },
+    symptoms: selectedSymptoms,
+    notes: document.getElementById('notes').value,
+    image_b64: photoB64
+  };
+
+  if (!payload.chief_complaint && selectedSymptoms.length === 0) {
+    alert('Please enter a chief complaint or select at least one symptom.');
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerHTML = '<div class="spinner"></div> Analysing with Gemma 4...';
+
+  try {
+    const res = await fetch(API + '/api/assess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    const data = await res.json();
+    showResult(data);
+  } catch (err) {
+    alert('Error: ' + err.message + '\n\nMake sure the Flask server is running on port 5000.');
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = 'Assess Patient with Gemma 4';
+  }
+}
+
+// ── Show result ──
+function showResult(data) {
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('result-section').style.display = 'block';
+
+  const urgency = data.urgency_level || 'routine';
+  const icons = { routine: '✅', watch: '👀', urgent: '⚠️', emergency: '🚨' };
+  const labels = { routine: 'Routine — Standard Care', watch: 'Watch Closely', urgent: 'Urgent — Go to Hospital Today', emergency: 'Emergency — Immediate Referral' };
+
+  const banner = document.getElementById('urgency-banner');
+  banner.className = 'urgency-banner ' + urgency;
+  document.getElementById('urgency-icon').textContent = icons[urgency] || '✅';
+  document.getElementById('urgency-label').textContent = labels[urgency] || urgency;
+  document.getElementById('assessment-text').textContent = data.assessment || '';
+
+  if (data.referral_needed && data.referral_reason) {
+    document.getElementById('referral-alert').style.display = 'flex';
+    document.getElementById('referral-reason').textContent = data.referral_reason;
+  } else {
+    document.getElementById('referral-alert').style.display = 'none';
+  }
+
+  const recsList = document.getElementById('recs-list');
+  recsList.innerHTML = '';
+  (data.recommendations || []).forEach(rec => {
+    const li = document.createElement('li');
+    li.textContent = rec;
+    recsList.appendChild(li);
+  });
+
+  document.getElementById('follow-up-text').textContent = data.follow_up || '';
+  document.getElementById('pidgin-text').textContent = data.pidgin_summary || '';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Reset ──
+function resetForm() {
+  document.getElementById('form-section').style.display = 'block';
+  document.getElementById('result-section').style.display = 'none';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  selectedSymptoms = [];
+  photoB64 = null;
+  document.getElementById('photo-preview').style.display = 'none';
+  document.querySelector('#photo-zone p').textContent = 'Tap to attach a photo — rash, wound, medication label, or ultrasound';
+  ['patient-age','gestation-weeks','gravida-para','chief-complaint','bp','pulse','temp','weight','fundal-height','notes']
+    .forEach(id => document.getElementById(id).value = '');
+}
+
+// ── History ──
+async function loadHistory() {
+  try {
+    const res = await fetch(API + '/api/consultations');
+    const data = await res.json();
+    const list = document.getElementById('history-list');
+
+    if (!data.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No consultations yet.<br>Complete an assessment to see history here.</p></div>';
+      return;
+    }
+
+    const badges = { routine: 'badge-routine', watch: 'badge-watch', urgent: 'badge-urgent', emergency: 'badge-emergency' };
+
+    list.innerHTML = [...data].reverse().map(c => `
+      <div class="history-card">
+        <div class="history-meta">
+          <span class="history-id">${c.id}</span>
+          <span class="urgency-badge ${badges[c.result?.urgency_level] || 'badge-routine'}">${c.result?.urgency_level || 'routine'}</span>
+        </div>
+        <div class="history-complaint">
+          ${c.patient_age ? c.patient_age + ' yrs · ' : ''}${c.gestation_weeks ? c.gestation_weeks + ' wks · ' : ''}${c.chief_complaint || 'No chief complaint'}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('history-list').innerHTML = '<p style="color:var(--text-light); font-size:14px;">Could not load history. Is the server running?</p>';
+  }
+}
+
+// ── API status ──
+async function checkApiStatus() {
+  try {
+    const res = await fetch(API + '/api/health');
+    const data = await res.json();
+    document.getElementById('api-status-text').textContent = data.api_configured ? 'Gemma 4 ready' : 'Demo mode';
+    if (!data.api_configured) {
+      document.querySelector('.status-dot').style.background = '#fbbf24';
+      document.querySelector('.status-dot').style.boxShadow = '0 0 6px #fbbf24';
+    }
+  } catch(e) {
+    document.getElementById('api-status-text').textContent = 'Server offline';
+    document.querySelector('.status-dot').style.background = '#ef4444';
+    document.querySelector('.status-dot').style.boxShadow = '0 0 6px #ef4444';
+  }
+}
+
+checkApiStatus();
+</script>
+</body>
+</html>
