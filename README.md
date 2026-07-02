@@ -1,4 +1,4 @@
-# 🤱 MamaGemma — Maternal Health Assistant for Community Midwives
+# 🤱 MamaGemma: Maternal Health Assistant for Community Midwives
 
 > Built for the **Gemma 4 Good Hackathon** by Kaggle × Google DeepMind · $200,000 Prize Pool
 
@@ -17,7 +17,7 @@ In Nigeria, over **30,000 women die annually** from preventable pregnancy compli
 - Patients who speak limited English
 - Overwhelming patient loads with limited support tools
 
-A CHW in a rural Lagos clinic needs to make triage decisions in real time — without being able to "Google it."
+A CHW in a rural Lagos clinic needs to make triage decisions in real time, without being able to "Google it."
 
 ## The Solution
 
@@ -27,14 +27,14 @@ A CHW in a rural Lagos clinic needs to make triage decisions in real time — wi
 - Assesses danger signs using WHO/FMOH guidelines
 - Returns a structured clinical recommendation with urgency level
 - Summarises findings in **Nigerian Pidgin English** for the patient
-- Stores all records **locally** — no data leaves the device
+- Stores all records **locally**, no data leaves the device
 
 ## Why Gemma 4?
 
 | Feature | How MamaGemma uses it |
 |---|---|
 | **Multimodal input** | Accepts photos of rashes, wounds, medication labels, or ultrasound printouts |
-| **On-device / edge deployment** | Gemma 4 E4B runs via Ollama on a local laptop — zero internet required |
+| **On-device / edge deployment** | Gemma 4 E4B runs via Ollama on a local laptop, zero internet required |
 | **Function calling** | Structured JSON output for consistent clinical formatting |
 | **Apache 2.0 license** | Free to deploy at PHC facilities with no licensing cost |
 | **Strong instruction-following** | Reliably follows WHO triage protocols in structured prompts |
@@ -78,14 +78,14 @@ ollama pull gemma3:4b    # Edge model — runs on most laptops
 
 - **Model**: Gemma 4 (E4B edge via Ollama for offline; 27B via Google AI Studio for cloud)
 - **Backend**: Python / Flask
-- **Frontend**: Vanilla HTML/CSS/JS — works in any browser, no install needed
-- **Storage**: Local JSON flat file — privacy-first, no cloud sync
+- **Frontend**: Vanilla HTML/CSS/JS, works in any browser, no install needed
+- **Storage**: Local JSON flat file, privacy-first, no cloud sync
 - **Languages**: English + Nigerian Pidgin English
 
 ## Tracks
 
 - **Primary**: Health & Sciences
-- **Secondary**: Digital Equity & Inclusivity (multilingual, offline-first)
+- **Secondary**: Digital Equity & Inclusivity (multilingual, offline first)
 
 ## Impact
 
@@ -121,4 +121,4 @@ Apache 2.0 — free to use, modify, and deploy.
 
 ---
 
-*Built with ❤️ in Lagos, Nigeria for the Gemma 4 Good Hackathon.*
+*Built with ❤️ for the Gemma 4 Good Hackathon.*
