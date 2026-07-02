@@ -117,7 +117,7 @@ mamagemma/
 
 ## License
 
-Apache 2.0 — free to use, modify, and deploy.
+Apache 2.0, free to use, modify, and deploy.
 
 ---
 
