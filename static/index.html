@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MamaGemma — Maternal Health Assistant</title>
+<title>MamaGemma - Maternal Health Assistant</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -550,7 +550,7 @@ textarea { resize: vertical; min-height: 80px; }
     <div class="logo-icon">🤱</div>
     <div class="logo-text">
       <h1>MamaGemma</h1>
-      <span>Maternal Health Assistant</span>
+      <span>| Maternal Health Assistant</span>
     </div>
   </div>
   <div class="header-right">
@@ -575,7 +575,7 @@ textarea { resize: vertical; min-height: 80px; }
 
       <!-- Patient Info -->
       <div class="form-card">
-        <h2>👩 Patient Information</h2>
+        <h2>🏥 Patient Information</h2>
         <div class="form-grid">
           <div class="form-group">
             <label>Age (years)</label>
@@ -626,7 +626,7 @@ textarea { resize: vertical; min-height: 80px; }
       <!-- Symptoms -->
       <div class="form-card">
         <h2>🩺 Symptoms</h2>
-        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">Select all that apply — tap to toggle</p>
+        <p style="font-size:13px; color:var(--text-light); margin-bottom:14px;">Select all that apply - tap to toggle</p>
 
         <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--red); margin-bottom:8px;">⚠️ Danger Signs</p>
         <div class="chips-grid" id="danger-chips">
@@ -667,7 +667,7 @@ textarea { resize: vertical; min-height: 80px; }
         <h2>📷 Photo (optional)</h2>
         <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-input').click()">
           <div style="font-size:28px;">📸</div>
-          <p>Tap to attach a photo — rash, wound, medication label, or ultrasound</p>
+          <p>Tap to attach a photo - rash, wound, medication label, or ultrasound</p>
           <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(event)">
           <img id="photo-preview">
         </div>
@@ -737,14 +737,14 @@ textarea { resize: vertical; min-height: 80px; }
     <div class="about-grid">
       <div class="about-block">
         <h3>🎯 Purpose</h3>
-        <p>Community health workers in Nigeria often operate without reliable internet, advanced equipment, or instant specialist access. MamaGemma provides AI-assisted clinical guidance at the point of care — in English and Pidgin.</p>
+        <p>Community health workers in Nigeria often operate without reliable internet, advanced equipment, or instant specialist access. MamaGemma provides AI-assisted clinical guidance at the point of care - in English and Pidgin.</p>
       </div>
       <div class="about-block">
         <h3>⚡ Key Features</h3>
         <ul>
-          <li>Offline-first — works without internet</li>
+          <li>Offline-first - works without internet</li>
           <li>Danger sign detection & triage</li>
-          <li>Multimodal — accepts patient photos</li>
+          <li>Multimodal - accepts patient photos</li>
           <li>English + Nigerian Pidgin output</li>
           <li>Local consultation log (privacy-first)</li>
           <li>WHO & FMOH guideline-aligned</li>
@@ -771,8 +771,8 @@ textarea { resize: vertical; min-height: 80px; }
         <strong>Model:</strong> Gemma 4 (E4B for edge deployment, 27B for cloud)<br>
         <strong>Backend:</strong> Python / Flask<br>
         <strong>Deployment:</strong> Ollama (offline) / Google AI Studio API<br>
-        <strong>Frontend:</strong> Vanilla HTML/CSS/JS — works on any browser, no app install<br>
-        <strong>Storage:</strong> Local JSON — no data leaves the device<br>
+        <strong>Frontend:</strong> Vanilla HTML/CSS/JS - works on any browser, no app install<br>
+        <strong>Storage:</strong> Local JSON - no data leaves the device<br>
         <strong>License:</strong> Apache 2.0
       </div>
     </div>
@@ -879,7 +879,7 @@ function showResult(data) {
 
   const urgency = data.urgency_level || 'routine';
   const icons = { routine: '✅', watch: '👀', urgent: '⚠️', emergency: '🚨' };
-  const labels = { routine: 'Routine — Standard Care', watch: 'Watch Closely', urgent: 'Urgent — Go to Hospital Today', emergency: 'Emergency — Immediate Referral' };
+  const labels = { routine: 'Routine - Standard Care', watch: 'Watch Closely', urgent: 'Urgent - Go to Hospital Today', emergency: 'Emergency - Immediate Referral' };
 
   const banner = document.getElementById('urgency-banner');
   banner.className = 'urgency-banner ' + urgency;
@@ -916,7 +916,7 @@ function resetForm() {
   selectedSymptoms = [];
   photoB64 = null;
   document.getElementById('photo-preview').style.display = 'none';
-  document.querySelector('#photo-zone p').textContent = 'Tap to attach a photo — rash, wound, medication label, or ultrasound';
+  document.querySelector('#photo-zone p').textContent = 'Tap to attach a photo - rash, wound, medication label, or ultrasound';
   ['patient-age','gestation-weeks','gravida-para','chief-complaint','bp','pulse','temp','weight','fundal-height','notes']
     .forEach(id => document.getElementById(id).value = '');
 }
