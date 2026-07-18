@@ -13,7 +13,6 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
 
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
-
 CONSULTATIONS_FILE = "data/consultations.json"
 
 DANGER_SIGNS = [
@@ -30,13 +29,13 @@ Your role is to:
 2. Identify danger signs that require urgent referral to a hospital
 3. Give clear, practical guidance in simple English or Nigerian Pidgin English
 4. Follow WHO and Nigerian FMOH maternal health guidelines
-5. Always prioritise safety — when in doubt, refer
+5. Always prioritise safety -- when in doubt, refer
 
 Response format (always use this JSON structure):
 {
   "assessment": "Brief clinical assessment in 2-3 sentences",
   "danger_signs_detected": true or false,
-  "urgency_level": "routine" | "watch" | "urgent" | "emergency",
+  "urgency_level": "routine" or "watch" or "urgent" or "emergency",
   "recommendations": ["Action 1", "Action 2", "Action 3"],
   "referral_needed": true or false,
   "referral_reason": "Reason if referral needed, else null",
@@ -81,7 +80,6 @@ def index():
 @app.route("/api/assess", methods=["POST"])
 def assess():
     data = request.get_json()
-
     patient_age = data.get("patient_age", "")
     gestation_weeks = data.get("gestation_weeks", "")
     gravida_para = data.get("gravida_para", "")
@@ -94,32 +92,35 @@ def assess():
     vitals_text = ""
     if vitals:
         parts = []
-        if vitals.get("bp"): parts.append(f"BP: {vitals['bp']}")
-        if vitals.get("pulse"): parts.append(f"Pulse: {vitals['pulse']} bpm")
-        if vitals.get("temp"): parts.append(f"Temp: {vitals['temp']}°C")
-        if vitals.get("weight"): parts.append(f"Weight: {vitals['weight']} kg")
-        if vitals.get("fundal_height"): parts.append(f"Fundal height: {vitals['fundal_height']} cm")
+        if vitals.get("bp"):
+            parts.append("BP: " + str(vitals["bp"]))
+        if vitals.get("pulse"):
+            parts.append("Pulse: " + str(vitals["pulse"]) + " bpm")
+        if vitals.get("temp"):
+            parts.append("Temp: " + str(vitals["temp"]) + "C")
+        if vitals.get("weight"):
+            parts.append("Weight: " + str(vitals["weight"]) + " kg")
+        if vitals.get("fundal_height"):
+            parts.append("Fundal height: " + str(vitals["fundal_height"]) + " cm")
         vitals_text = ", ".join(parts)
 
-    prompt = f"""Maternal health assessment request:
+    prompt = "Maternal health assessment request:\n\n"
+    prompt += "Patient: " + str(patient_age) + " years old\n"
+    prompt += "Gestation: " + str(gestation_weeks) + " weeks\n"
+    prompt += "Obstetric history: " + str(gravida_para) + "\n"
+    prompt += "Chief complaint: " + str(chief_complaint) + "\n"
+    prompt += "Vitals: " + (vitals_text if vitals_text else "Not recorded") + "\n"
+    prompt += "Symptoms reported: " + (", ".join(symptoms) if symptoms else "None specified") + "\n"
+    prompt += "Additional notes: " + (notes if notes else "None") + "\n\n"
+    prompt += "Please assess this patient and provide your structured response in the JSON format specified."
 
-Patient: {patient_age} years old
-Gestation: {gestation_weeks} weeks
-Obstetric history: {gravida_para}
-Chief complaint: {chief_complaint}
-Vitals: {vitals_text if vitals_text else 'Not recorded'}
-Symptoms reported: {', '.join(symptoms) if symptoms else 'None specified'}
-Additional notes: {notes if notes else 'None'}
-
-Please assess this patient and provide your structured response in the JSON format specified."""
-
-    full_text = f"{chief_complaint} {' '.join(symptoms)} {notes}".lower()
+    full_text = (chief_complaint + " " + " ".join(symptoms) + " " + notes).lower()
     local_danger = check_danger_signs_local(full_text)
 
     if not API_KEY:
         urgency = "emergency" if local_danger else "routine"
         result = {
-            "assessment": "Demo mode: API key not configured. In production this uses Gemma 4 via Google AI Studio.",
+            "assessment": "Demo mode: API key not configured.",
             "danger_signs_detected": local_danger,
             "urgency_level": urgency,
             "recommendations": [
@@ -129,13 +130,12 @@ Please assess this patient and provide your structured response in the JSON form
             ],
             "referral_needed": local_danger,
             "referral_reason": "Danger signs detected locally" if local_danger else None,
-            "pidgin_summary": "MamaGemma dey here to help you. E get demo mode — add API key make e work well well.",
+            "pidgin_summary": "MamaGemma dey here to help you. Add API key make e work well well.",
             "follow_up": "Return in 4 weeks or sooner if symptoms worsen"
         }
     else:
         try:
             client = genai.Client(api_key=API_KEY)
-
             content_parts = [prompt]
             if image_b64:
                 image_data = base64.b64decode(image_b64)
@@ -145,7 +145,6 @@ Please assess this patient and provide your structured response in the JSON form
                 content_parts.append(
                     types.Part.from_bytes(data=buf.getvalue(), mime_type="image/jpeg")
                 )
-
             response = client.models.generate_content(
                 model="gemma-4-31b-it",
                 contents=content_parts,
@@ -172,7 +171,6 @@ Please assess this patient and provide your structured response in the JSON form
         "result": result
     }
     save_consultation(consultation)
-
     return jsonify(result)
 
 
@@ -184,9 +182,3 @@ def get_consultations():
 @app.route("/api/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok", "model": "gemma-4", "api_configured": bool(API_KEY)})
-
-
-if __name__ == "__main__":
-    os.makedirs("data", exist_ok=True)
-    port = int(os.environ.get("PORT", 8080))
-    app.run(debug=False, host="0.0.0.0", port=port)
