@@ -12,13 +12,10 @@ import io
 app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
 
-# Configure Gemma via AI Studio
-# Set GEMINI_API_KEY in your .env or environment
 API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 CONSULTATIONS_FILE = "data/consultations.json"
 
-# ── Danger signs that always trigger urgent referral ──────────────────────────
 DANGER_SIGNS = [
     "bleeding", "haemorrhage", "hemorrhage", "fits", "convulsion", "seizure",
     "unconscious", "faint", "severe headache", "blurred vision", "swollen face",
@@ -72,7 +69,6 @@ def save_consultation(data):
 
 
 def check_danger_signs_local(text):
-    """Quick local check for danger signs without API call."""
     text_lower = text.lower()
     return any(sign in text_lower for sign in DANGER_SIGNS)
 
@@ -93,9 +89,8 @@ def assess():
     vitals = data.get("vitals", {})
     symptoms = data.get("symptoms", [])
     notes = data.get("notes", "")
-    image_b64 = data.get("image_b64", None)  # optional photo
+    image_b64 = data.get("image_b64", None)
 
-    # Build clinical summary for the model
     vitals_text = ""
     if vitals:
         parts = []
@@ -118,12 +113,10 @@ Additional notes: {notes if notes else 'None'}
 
 Please assess this patient and provide your structured response in the JSON format specified."""
 
-    # Local danger sign pre-check
     full_text = f"{chief_complaint} {' '.join(symptoms)} {notes}".lower()
     local_danger = check_danger_signs_local(full_text)
 
     if not API_KEY:
-        # Demo mode — return realistic mock response
         urgency = "emergency" if local_danger else "routine"
         result = {
             "assessment": "Demo mode: API key not configured. In production this uses Gemma 4 via Google AI Studio.",
@@ -154,7 +147,7 @@ Please assess this patient and provide your structured response in the JSON form
                 )
 
             response = client.models.generate_content(
-                model="gemma-4-31b-it",  # swap to gemma-4 model string when released on AI Studio
+                model="gemma-4-31b-it",
                 contents=content_parts,
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_PROMPT,
@@ -163,9 +156,10 @@ Please assess this patient and provide your structured response in the JSON form
             )
             result = json.loads(response.text)
         except Exception as e:
-            import traceback; traceback.print_exc(); return jsonify({"error": str(e)}), 500
+            import traceback
+            traceback.print_exc()
+            return jsonify({"error": str(e)}), 500
 
-    # Save consultation log
     consultation = {
         "id": datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
         "timestamp": datetime.datetime.now().isoformat(),
@@ -195,4 +189,4 @@ def health():
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
     port = int(os.environ.get("PORT", 8080))
-app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=False, host="0.0.0.0", port=port)
